@@ -48,9 +48,15 @@
 </head>
 <body>
     <div class="container">
-        <h1>Upload an XLSX File</h1>
         <form method="POST" enctype="multipart/form-data">
-            <input type="file" name="file">
+            <label for="opcion">Selecciona una opción:</label>
+            <select id="opcion" name="opcion">
+                {% for key, value in lista.items() %}
+                    <option value="{{ key }}">{{ value }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" name="action" value="generate_single" id="generate_single_btn">Generar PDF Individual</button>
+            
             <button type="submit" name="action" value="generate_all" id="generate_all_btn">Generar PDF</button>
         </form>
     </div>

@@ -7,12 +7,26 @@ import zipfile
 import tempfile
 import os
 import shutil
-
-
+import gspread
 
 
 app = Flask(__name__)
 app.secret_key = 'k19234213as'
+
+spreadsheet_id = '11mnygQWtGF2ZRF4000tpST0rKrftqpjBOojSaNjunss'
+worksheet_name = 'TASK SCHEDULED'
+
+gc = gspread.service_account(filename='client_secret.json')        
+
+spreadsheet = gc.open_by_key(spreadsheet_id)
+
+worksheet = spreadsheet.worksheet(worksheet_name)
+
+data_from_sheets = worksheet.get_all_values()
+
+df = pd.DataFrame(data_from_sheets[1:], columns=data_from_sheets[0])
+df.columns = df.columns.str.strip()
+
 
 def generate_json(option_selected, df, listas_agrupadas, lista_options):
     indices_seleccionados = listas_agrupadas[lista_options[option_selected]]
@@ -118,69 +132,60 @@ def clean_format(cell):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    listas_agrupadas = {}
+
+    for key, group in df[~df['WO'].str.contains('[xX]')].groupby('WO'):
+        indices = group.index.tolist()
+        listas_agrupadas[key] = indices
+
+    lista = {}
+    lista_options = list(listas_agrupadas.keys())
+
+    for i, option in enumerate(lista_options, start=1):
+        lista[i] = option
+
     if request.method == 'POST':
 
-        uploaded_file = request.files['file']
-        uploaded_file.save("uploaded_file.xlsx")
-
-        # Leer el archivo Excel
-        df = pd.read_excel(uploaded_file, sheet_name="TASK SCHEDULED")
-
-        # Aplicar una función que limpie el formato a todas las celdas del DataFrame
-        df = df.applymap(clean_format)
+        if request.form['action'] == 'generate_single':
+            opcion_seleccionada = int(request.form['opcion']) - 1        
+            return download_pdf(opcion_seleccionada, df, listas_agrupadas, lista_options)
         
-                
-        df = pd.read_excel(uploaded_file, sheet_name="TASK SCHEDULED")
-        df = df[df['WO'].notna()]
+        elif request.form['action'] == 'generate_all':
+            temp_dir = tempfile.mkdtemp()
+            output_dir = 'output_pdfs'
 
-        listas_agrupadas = {}
+            if not os.path.exists(output_dir):
+                os.makedirs(output_dir)
 
-        # Agrupa las filas por el valor de 'WORK ORDERS'
-        for key, group in df[~df['WO'].str.contains('[xX]')].groupby('WO'):
-            indices = group.index.tolist()
-            listas_agrupadas[key] = indices
+            pdf_filenames = []
 
-        lista = {}
-        lista_options = list(listas_agrupadas.keys())
+            for clave, nombre in lista.items():
+                opcion = clave - 1
+                pdf_data_bytesio = generate_zip(opcion, df, listas_agrupadas, lista_options)
+                pdf_filename = os.path.join(output_dir, f'{nombre}.pdf')
 
-        for i, option in enumerate(lista_options, start=1):
-            lista[i] = option
+                with open(pdf_filename, 'wb') as pdf_file:
+                    pdf_file.write(pdf_data_bytesio.read())
 
-        temp_dir = tempfile.mkdtemp()
-        output_dir = 'output_pdfs'
+                pdf_filenames.append(pdf_filename)
 
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
+            # Comprimir todos los PDFs en un archivo ZIP
+            zip_filename = os.path.join(temp_dir, 'all_pdfs.zip')
+            with zipfile.ZipFile(zip_filename, 'w', zipfile.ZIP_DEFLATED) as zipf:
+                for pdf_file in pdf_filenames:
+                    zipf.write(pdf_file, os.path.basename(pdf_file))  # Agregar los archivos al ZIP
 
-        pdf_filenames = []
+            # Mover el archivo ZIP a la carpeta de salida en el servidor
+            shutil.move(zip_filename, os.path.join(output_dir, 'all_pdfs.zip'))
 
-        for clave, nombre in lista.items():
-            opcion = clave - 1
-            pdf_data_bytesio = generate_zip(opcion, df, listas_agrupadas, lista_options)
-            pdf_filename = os.path.join(output_dir, f'{nombre}.pdf')
-
-            with open(pdf_filename, 'wb') as pdf_file:
-                pdf_file.write(pdf_data_bytesio.read())
-
-            pdf_filenames.append(pdf_filename)
-
-        # Comprimir todos los PDFs en un archivo ZIP
-        zip_filename = os.path.join(temp_dir, 'all_pdfs.zip')
-        with zipfile.ZipFile(zip_filename, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            shutil.rmtree(temp_dir)  # Elimina el directorio temporal y su contenido
             for pdf_file in pdf_filenames:
-                zipf.write(pdf_file, os.path.basename(pdf_file))  # Agregar los archivos al ZIP
+                os.remove(pdf_file)
 
-        # Mover el archivo ZIP a la carpeta de salida en el servidor
-        shutil.move(zip_filename, os.path.join(output_dir, 'all_pdfs.zip'))
-
-        shutil.rmtree(temp_dir)  # Elimina el directorio temporal y su contenido
-        for pdf_file in pdf_filenames:
-            os.remove(pdf_file)
-
-        # Enviar el archivo ZIP como respuesta para su descarga
-        return send_file(os.path.join(output_dir, 'all_pdfs.zip'), as_attachment=True)
-    
-    return render_template('index.html')
+            # Enviar el archivo ZIP como respuesta para su descarga
+            return send_file(os.path.join(output_dir, 'all_pdfs.zip'), as_attachment=True)
+        
+    return render_template('index.html', lista=lista)
 
 if __name__ == '__main__':
     app.run(debug=True)

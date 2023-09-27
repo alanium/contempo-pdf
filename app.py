@@ -6,8 +6,7 @@ from io import BytesIO
 import zipfile
 import tempfile
 import os
-import shutil  # Agrega esta importación
-import openpyxl
+import shutil
 
 
 
@@ -107,7 +106,14 @@ def generate_zip(opcion_seleccionada, df, listas_agrupadas, lista_options):
 
     return pdf_data_bytesio 
 
-
+def clean_format(cell):
+    if isinstance(cell, str):
+        # Si la celda es una cadena, quitar cualquier formato no deseado aquí
+        # Por ejemplo, puedes eliminar espacios en blanco al principio y al final:
+        return cell.strip()
+    else:
+        # Si la celda no es una cadena, mantener su valor sin cambios
+        return cell
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -115,7 +121,14 @@ def index():
     if request.method == 'POST':
 
         uploaded_file = request.files['file']
-        uploaded_file.save("uploaded_file.ods")
+        uploaded_file.save("uploaded_file.xlsx")
+
+        # Leer el archivo Excel
+        df = pd.read_excel(uploaded_file, sheet_name="TASK SCHEDULED")
+
+        # Aplicar una función que limpie el formato a todas las celdas del DataFrame
+        df = df.applymap(clean_format)
+        
                 
         df = pd.read_excel(uploaded_file, sheet_name="TASK SCHEDULED")
         df = df[df['WO'].notna()]

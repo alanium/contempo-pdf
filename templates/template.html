@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        @page {
+            size: A4;
+        }
+
+        body {
+            font-family: Helvetica;
+        }
+
+        .container {
+            width: 21cm;
+            min-height: 29.7cm;
+            margin: 0 auto;
+            
+        }
+
+        .work_order_title {
+            color: #000000;
+            font-size: 3rem;
+            text-align: right;
+        }
+
+        .wo_id {
+            text-align: right;
+            margin: 0 auto;
+        }
+
+        .wo_id_value {
+            padding: 5px;
+            background-color: rgb(209, 229, 255);
+            width: auto;
+            margin: 0 auto;
+            border-bottom: 1px solid black;
+            font-size: 18px;
+        }
+
+
+        .table_light_blue {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 13px;            
+        }
+
+        .table_light_blue th,
+        .table_light_blue td {
+            padding: 3px;
+            text-align: left;
+            border-bottom: 1px solid #ccc;
+            border: 1px solid #000000;
+            padding-left: 5px;
+        }
+        
+        .table_1_2_container{
+            padding-top: 100px;
+            padding-bottom: 215px;
+            font-size: 13px;
+        }
+
+        .table_1 {
+            width: 49%;
+            float: left;
+            text-align: left;
+            border: 1px solid #000000;       
+        }
+
+        .table_2 {
+            width: 49%;
+            float: right;
+            text-align: left;
+            border: 1px solid #000000;            
+        }
+
+        .table_1 th,
+        .table_1 td,
+        .table_2 th,
+        .table_2 td {
+            padding: 2px;
+            padding-left: 5px;
+        }
+
+        .table_head_container {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+
+        }
+
+        /* Estilo para la tabla de tareas */
+        .table_tasks {
+            border-collapse: collapse;
+            width: 100%;
+            border: 1px solid #000000;
+            font-size: 13px;
+        }
+
+        .table_tasks th,
+        .table_tasks td {
+            padding: 2px;
+            padding-left: 5px;
+            border-bottom: 1px solid #808080;
+            text-align: left;
+        }
+
+        .table_tasks tr:last-child td {
+            border-bottom: 1px solid #000000;
+        }
+        
+        .table_tasks thead th {
+            border-bottom: 1px solid #000000;
+        }
+
+        .logo {
+            width: 250px;
+            height: 90px;
+        }
+
+        .company-table{
+            width: 100%;
+        }
+
+        .table_tasks tbody td:last-child {
+            border-left: 1px solid #000000;
+        }
+
+        /* Estilos para los campos de firma y etiquetas */
+        .signatures {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .signatures td {
+            padding: 5px;
+        }
+
+        .signature-box {
+            width: 100%;
+            height: 50px;
+            background-color: #dfdede;
+            margin-top: 5px;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="invoice">
+            <div class="row">
+                <div>
+                    <table class="company-table">
+                        <tbody>                          
+                          <tr>                            
+                            <td>
+                                <img class="logo" src="D:/importante/tools/Python/venvs/api_rest/static/img/logo.png" alt="Logo">   
+                            </td>
+                            <td>
+                                <h1 class="work_order_title">WORK ORDER</h1>
+                                <p class="wo_id"><strong><span>W.O ID: </span></strong>
+                                    <span class="wo_id_value">{{wo}}</span></p>
+                            </td>          
+                          </tr>            
+                        </tbody>
+                      </table>                    
+                <div class="row">
+                    <div class="table_1_2_container">
+                        <table class="table_1">
+                            <tr>
+                                <td><strong>Full Name</strong></td>
+                            </tr>
+                            <tr>
+                                <td style="background-color: rgb(209, 229, 255);"><em>&nbsp;</em></td>
+                            </tr>                            
+                            <tr>
+                                <td><strong>Address</strong></td>
+                            </tr>
+                            <tr>
+                                <td style="background-color: rgb(209, 229, 255);"><em>&nbsp;</em></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>City, State, Zip</strong></td>
+                            </tr>
+                            <tr>
+                                <td style="background-color: rgb(209, 229, 255);"><em>&nbsp;</em></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Phone</strong></td>
+                            </tr>
+                            <tr>
+                                <td style="background-color: rgb(209, 229, 255);"><em>&nbsp;</em></td>
+                            </tr>
+                        </tbody>
+                        </table>
+                        <table class="table_2">
+                                <tr>
+                                    <td><strong>Customer Name</strong></td>
+                                </tr>
+                                <tr>
+                                    <td style="background-color: rgb(209, 229, 255);"><em>{{c_name}}</em></td>
+                                </tr>
+                                
+                                <tr>
+                                    <td><strong>Customer Adress</strong></td>
+                                </tr>
+                                <tr>
+                                    <td style="background-color: rgb(209, 229, 255);"><em>{{c_adress}}</em></td>
+                                </tr>
+
+                                <tr>
+                                    <td><strong>&nbsp;</strong></td>
+                                </tr>
+                                <tr>
+                                    <td style="background-color: rgb(209, 229, 255);"><em>&nbsp;</em></td>
+                                </tr>
+
+                                <tr>
+                                    <td><strong>&nbsp;</strong></td>
+                                </tr>
+                                <tr>
+                                    <td style="background-color: rgb(209, 229, 255);"><em>&nbsp;</em></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>  
+
+                        <table class="table_light_blue">
+                            <tbody>
+                                <tr>
+                                    <td style="width: 100%; background-color: rgb(41, 105, 176);">
+                                        <div><strong><span style="color: rgb(255, 255, 255);">Scope of work</span></strong></div>
+                                    </td>
+                                </tr>                                
+                            </tbody>
+                        </table>
+                        <table class="table_tasks">
+                                <thead>
+                                    <tr>
+                                        <th style="background-color: rgb(41, 105, 176);"><span style="color: rgb(255, 255, 255);">Description</span></th>
+                                        <th style="background-color: rgb(41, 105, 176);"><span style="color: rgb(255, 255, 255);">Code</span></th>
+                                        <th style="background-color: rgb(41, 105, 176);"><span style="color: rgb(255, 255, 255);">Unity</span></th>
+                                        <th style="background-color: rgb(41, 105, 176);"><span style="color: rgb(255, 255, 255);">Quantity</span></th>
+                                        <th style="background-color: rgb(41, 105, 176);"><span style="color: rgb(255, 255, 255);">Type</span></th>
+                                        <th style="background-color: rgb(41, 105, 176);"><span style="color: rgb(255, 255, 255);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Total&nbsp;&nbsp;&nbsp;</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for task in task_info %}
+                                    <tr>
+                                        <td><span>{{ task.DESCRIPTION }}</span></td>
+                                        <td><span>{{ task.UNIT_WEEK }}</span></td>
+                                        <td><span>{{ task.QUANTITY }}</span></td>
+                                        <td><span>{{ task.TYPE }}</span></td>
+                                        <td><span>{{ task.CODE }}</span></td>
+                                        <td><span></span></td>
+                                    </tr>
+                                    {% endfor %}
+                                    <tr>
+                                        <td><span>&nbsp;</span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><span>&nbsp;</span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><span>&nbsp;</span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><span>&nbsp;</span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><span>&nbsp;</span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><span>&nbsp;</span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><span>&nbsp;</span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><span>&nbsp;</span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                        <td><span></span></td>
+                                    </tr>
+                                </tbody>
+                        </table>
+
+                        <!-- Dentro de tu tabla de firmas -->
+<table class="signatures">
+    <tbody>
+        <tr>
+            <!-- Columna izquierda -->
+            <td style="width: 50%;">
+                <div class="signature-box">
+                    <!-- Agrega aquí el contenido de la firma -->
+                </div>
+            </td>
+            <!-- Columna derecha -->
+            <td style="width: 50%;">
+                <div class="signature-box">
+                    <!-- Agrega aquí el contenido de la firma -->
+                </div>
+            </td>            
+        </tr>
+        <tr>
+            <!-- Columna izquierda para la fecha -->
+            <td style="width: 50%;text-align: center;">
+                <strong>Project Manager Signature</strong>
+                <!-- Agrega aquí la fecha -->
+            </td>
+            <!-- Columna derecha para la fecha -->
+            <td style="width: 50%;text-align: center;">
+                <strong>Subcontractor Signature</strong>
+                <!-- Agrega aquí la fecha -->
+            </td>
+        </tr>
+        <tr>
+            <!-- Columna izquierda -->
+            <td style="width: 50%;">
+                <div class="signature-box">
+                    <!-- Agrega aquí el contenido de la firma -->
+                </div>
+            </td>
+            <!-- Columna derecha -->
+            <td style="width: 50%;">
+                <div class="signature-box">
+                    <!-- Agrega aquí el contenido de la firma -->
+                </div>
+            </td>            
+        </tr>
+        <tr>
+            <!-- Columna izquierda para la fecha -->
+            <td style="width: 50%; text-align: center;">
+                <strong>Date of Acceptance</strong>
+                <!-- Agrega aquí la fecha -->
+            </td>
+            <!-- Columna derecha para la fecha -->
+            <td style="width: 50%;text-align: center;">
+                <strong>Date of Acceptance</strong>
+                <!-- Agrega aquí la fecha -->
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

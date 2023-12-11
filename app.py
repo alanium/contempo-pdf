@@ -15,7 +15,7 @@ app.secret_key = 'k19234213as'
 
 def load_data():
     spreadsheet_id = '11mnygQWtGF2ZRF4000tpST0rKrftqpjBOojSaNjunss'
-    worksheet_name = 'TASK SCHEDULED'
+    worksheet_name = 'WO-TASK'
 
     gc = gspread.service_account(filename='client_secret.json')        
 
@@ -30,7 +30,7 @@ def load_data():
 
     listas_agrupadas = {}
 
-    for key, group in df[~df['WO'].str.contains('[xX]')].groupby('WO'):
+    for key, group in df[~df['wo'].str.contains('[xX]')].groupby('wo'):
         indices = group.index.tolist()
         listas_agrupadas[key] = indices
 
@@ -55,7 +55,7 @@ def wo_generate_json(option_selected, df, listas_agrupadas, lista_options):
             row_dict[column_name] = value
         
         # Usar el valor de la columna 'DESCRIPTION' como clave para el diccionario principal
-        result_dict[row['DESCRIPTION']] = row_dict
+        result_dict[row['description']] = row_dict
     
     return result_dict    
 
@@ -84,19 +84,19 @@ def wo_download_pdf(opcion_seleccionada, df, listas_agrupadas, lista_options):
     resultado = wo_generate_json(opcion_seleccionada, df, listas_agrupadas, lista_options)
 
     primer_objeto = list(resultado.values())[0]
-    wo = primer_objeto['WO']
-    c_name = primer_objeto['CUSTOMER NAME']
-    c_adress = primer_objeto['CUSTOMER ADDRESS']
+    wo = primer_objeto['wo']
+    c_name = primer_objeto['customer_name']
+    c_adress = primer_objeto['customer_address']
 
     task_info = []
 
     for obj in resultado.values():
         task_info.append({
-            'CODE': obj['CODE'],
-            'DESCRIPTION': obj['DESCRIPTION'],
-            'UNIT_WEEK': obj['UNIT / WEEK'],
-            'QUANTITY': obj['QUANTITY'],
-            'TYPE': obj['TYPE']
+            'CODE': obj['code'],
+            'DESCRIPTION': obj['description'],
+            'UNIT_WEEK': obj['unit/week'],
+            'QUANTITY': obj['quantity'],
+            'TYPE': obj['type']
         })
 
     pdf_data_pdfkit = wo_generate_pdf(wo, c_name, c_adress, task_info)
@@ -113,19 +113,19 @@ def wo_generate_zip(opcion_seleccionada, df, listas_agrupadas, lista_options):
     resultado = wo_generate_json(opcion_seleccionada, df, listas_agrupadas, lista_options)
 
     primer_objeto = list(resultado.values())[0]
-    wo = primer_objeto['WO']
-    c_name = primer_objeto['CUSTOMER NAME']
-    c_adress = primer_objeto['CUSTOMER ADDRESS']
+    wo = primer_objeto['wo']
+    c_name = primer_objeto['customer_name']
+    c_adress = primer_objeto['customer_address']
 
     task_info = []
 
     for obj in resultado.values():
         task_info.append({
-            'CODE': obj['CODE'],
-            'DESCRIPTION': obj['DESCRIPTION'],
-            'UNIT_WEEK': obj['UNIT / WEEK'],
-            'QUANTITY': obj['QUANTITY'],
-            'TYPE': obj['TYPE']
+            'CODE': obj['code'],
+            'DESCRIPTION': obj['description'],
+            'UNIT_WEEK': obj['unit/week'],
+            'QUANTITY': obj['quantity'],
+            'TYPE': obj['type']
         })
 
     pdf_data_pdfkit = wo_generate_pdf(wo, c_name, c_adress, task_info)

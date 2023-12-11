@@ -74,7 +74,8 @@ def wo_generate_pdf(wo, c_name, c_adress, task_info):
     template = template_env.get_template(html_template)
     out_text = template.render(context)
 
-    wkhtmltopdf_path = 'wkhtmltopdf/bin/wkhtmltopdf.exe'
+    #wkhtmltopdf_path = 'wkhtmltopdf/bin/wkhtmltopdf.exe'
+    wkhtmltopdf_path = '/usr/bin/wkhtmltopdf'
     config = pdfkit.configuration(wkhtmltopdf=wkhtmltopdf_path)
 
     pdf_data_pdfkit = pdfkit.from_string(out_text, False, configuration=config, options={'enable-local-file-access': None})
